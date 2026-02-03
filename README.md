@@ -6,6 +6,8 @@ This project implements a simple bank system in Go, modeled from the provided UM
 
 The implementation follows the UML in `diagram.png`.
 
+![UML Diagram](diagram.png)
+
 ## Project Structure
 
 ```
@@ -45,6 +47,52 @@ The implementation follows the UML in `diagram.png`.
 - `TransactionInterface`
 
 These interfaces align with the UML and allow testing or future extension.
+
+## Implementation Details
+
+### Account Holders
+
+- `AccountHolder` stores the shared `idNumber`.
+- `Person` and `Company` embed `AccountHolder` and add their own data:
+  - `Person` adds `firstName` and `lastName`.
+  - `Company` adds `companyName` and uses `taxID` as the `idNumber`.
+
+### Accounts
+
+- `Account` tracks:
+  - `accountHolder` (an `AccountHolderInterface`),
+  - `accountNumber`,
+  - `pin`,
+  - `balance`.
+- `CreditAccount` ignores non-positive amounts.
+- `DebitAccount` fails for non-positive amounts or insufficient funds.
+- `ValidatePin` is a simple equality check.
+
+### ConsumerAccount and CommercialAccount
+
+- `ConsumerAccount` embeds `Account` without extra behavior.
+- `CommercialAccount` embeds `Account` and keeps an `authorizedUsers` list.
+- `AddAuthorizedUser` prevents duplicates.
+- `IsAuthorizedUser` checks by `idNumber`.
+
+### Bank
+
+- `Bank` owns all accounts in a map keyed by account number.
+- Account numbers auto-increment from 1.
+- `OpenConsumerAccount` and `OpenCommercialAccount` create accounts and return the new number.
+- `AuthenticateUser` delegates PIN validation to the target account.
+- `Credit` and `Debit` dispatch to the account if it exists.
+
+### Transaction
+
+- A `Transaction` wraps a bank + account number + auth state.
+- When created, it validates the PIN once and stores `authenticated`.
+- `GetBalance`, `Credit`, and `Debit` are no-ops if authentication failed.
+
+### Demo (main.go)
+
+- Creates a bank, opens one consumer and one commercial account.
+- Uses `Transaction` to show balances and perform credit/debit flows.
 
 ## Running
 
