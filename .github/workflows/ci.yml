@@ -21,7 +21,8 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
-          install-mode: go
+          install-mode: goinstall
+          skip-cache: true
 
       - name: Run tests
         run: go test ./...
