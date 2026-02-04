@@ -1,4 +1,4 @@
-# Simple Bank System (Go)
+# Simple Bank Management System (Go)
 
 This project implements a simple bank system in Go, modeled from the provided UML diagram. It uses Go structs, interfaces, and composition to mirror the OOP design.
 
